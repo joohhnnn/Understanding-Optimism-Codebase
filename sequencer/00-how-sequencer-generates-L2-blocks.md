@@ -681,8 +681,6 @@ Here you can refer to the illustration provided by oplabs.
 
 This flowchart mainly describes the process of creating blocks.
 
-#### Rollup 驱动程序实际上并不真正创建区块。相反，它通过 Engine API 指导执行引擎这样做。在上述每次块派生循环的迭代中，rollup 驱动程序将制作一个 payload 属性对象并将其发送到执行引擎。然后执行引擎将 payload 属性对象转换为一个区块，并将其添加到链中。Rollup 驱动程序的基本序列如下：
-
 #### The Rollup driver actually does not really create blocks. Instead, it guides the execution engine to do so through the Engine API. In each iteration of the above block derivation loop, the rollup driver will make a payload attribute object and send it to the execution engine. The execution engine then converts the payload attribute object into a block and adds it to the chain. The basic sequence of the Rollup driver is as follows:
 
 1. Call `engine_forkChoiceUpdatedV1` using the payload attribute object. We will skip the details of the fork choice state parameter for now - just know that one of its fields is `headBlockHash`, which is set to the block hash at the tip of the L2 chain. The Engine API returns a payload ID.
