@@ -675,11 +675,11 @@ CompleteBuildingBlock calls the ConfirmPayload method internally
 		return payload, BlockInsertOK, nil
 	}
 
-在这里可以参考这张oplabs给出来的插图
+Here you can refer to the illustration provided by oplabs. 
 
 ![ENGINE](../resources/engine.svg)
 
-Here you can refer to the illustration provided by oplabs. This flowchart mainly describes the process of creating blocks.
+This flowchart mainly describes the process of creating blocks.
 
 #### Rollup 驱动程序实际上并不真正创建区块。相反，它通过 Engine API 指导执行引擎这样做。在上述每次块派生循环的迭代中，rollup 驱动程序将制作一个 payload 属性对象并将其发送到执行引擎。然后执行引擎将 payload 属性对象转换为一个区块，并将其添加到链中。Rollup 驱动程序的基本序列如下：
 
