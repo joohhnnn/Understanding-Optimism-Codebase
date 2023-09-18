@@ -263,7 +263,7 @@ In the function below, we can see that the passed-in epoch parameter is `l1Origi
 
 
 ```
-	attrs.NoTxPool = uint64(attrs.Timestamp) > l1Origin.Time+d.config.MaxSequencerDrift
+	attrs, err := d.attrBuilder.PreparePayloadAttributes(fetchCtx, l2Head, l1Origin.ID())
 ```
 
 	func (ba *FetchingAttributesBuilder) PreparePayloadAttributes(ctx context.Context, l2Parent eth.L2BlockRef, epoch eth.BlockID) (attrs *eth.PayloadAttributes, err error) {
@@ -342,7 +342,6 @@ In the function below, we can see that the passed-in epoch parameter is `l1Origi
 	}, nil
 }
 
-In this function, we can observe that the passed-in epoch parameter is `l1Origin.ID()`, aligning with our definition of epoch numbering.
 
 As illustrated in the code, the `PreparePayloadAttributes` is tasked with preparing the payload attributes for the new block. Initially, it determines whether there is a need to fetch new L1 deposits and system configuration data based on the parent block information of L1 and L2. Following this, it crafts a special system transaction encompassing details pertinent to the L1 block and system configurations. This distinct transaction, along with potential L1 deposit transactions, constitute a set of transactions to be incorporated into the payload of the new L2 block. The function ensures the coherence of time and the correct allocation of serial numbers, ultimately returning a `PayloadAttributes` structure containing all this information for the creation of a new L2 block. However, at this point, a preliminary payload is prepared, incorporating only the deposit transactions from L1. Subsequently, `StartPayload` is invoked to commence the next phase of payload construction.
 
