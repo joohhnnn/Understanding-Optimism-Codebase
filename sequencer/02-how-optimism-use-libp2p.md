@@ -96,10 +96,11 @@ The above are some primary aspects to consider and implement when using libp2p. 
 
 ## Use of libp2p in OP-node
 
-To understand the relationship between op-node and libp2p, we need to clarify a few questions:
-    - Why choose libp2p? Why not devp2p (as used by geth)?
-    - What data or processes in OP-node are closely related to the p2p network?
-    - How are these functionalities implemented at the code level?
+To understand the relationship between op-node and libp2p, we need to clarify a few questions
+
+- Why choose libp2p? Why not devp2p (as used by geth)?
+- What data or processes in OP-node are closely related to the p2p network?
+- How are these functionalities implemented at the code level?
 
 ### Reasons op-node needs the libp2p network
 
