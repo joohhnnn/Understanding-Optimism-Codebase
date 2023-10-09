@@ -121,7 +121,7 @@ The host can be understood as the p2p node. When starting this node, some specif
 
 Now let's take a look at the `Host` method in the `op-node/p2p/host.go` file.
 
-This function is primarily used to set up the libp2p host and various configurations. Below are the key parts of the function along with a brief description in English:
+This function is primarily used to set up the libp2p host and various configurations. Below are the key parts of the function along with a brief description:
 
 1. **Check if P2P is Disabled**  
    If P2P is disabled, the function will return immediately.
