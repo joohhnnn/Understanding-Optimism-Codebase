@@ -34,13 +34,13 @@ Before we go further, let's understand some basic concepts.
 
 This sync scenario occurs when a new L2 block is generated, specifically under the sequencer mode discussed in the previous section on how new blocks are produced.
 
-After a new block is generated, the sequencer broadcasts to the 'new unsafe block' topic via the pub/sub (publish/subscribe) module of the libp2p-based P2P network. All nodes that have subscribed to this topic will directly or indirectly receive this broadcast message. [More details can be found here](https://github.com/joohhnnn/Understanding-Optimism-Codebase-CN/blob/main/sequencer/02-how-optimism-use-libp2p.md#gossip%E4%B8%8B%E7%9A%84%E5%8C%BA%E5%9D%97%E4%BC%A0%E6%92%AD).
+After a new block is generated, the sequencer broadcasts to the 'new unsafe block' topic via the pub/sub (publish/subscribe) module of the libp2p-based P2P network. All nodes that have subscribed to this topic will directly or indirectly receive this broadcast message. [More details can be found here](https://github.com/joohhnnn/Understanding-Optimism-Codebase/blob/main/sequencer/02-how-optimism-use-libp2p.md#block-propagation-under-gossip).
 
 ## Op-node libp2p-based request-response reverse block header sync
 
 This sync scenario occurs when, due to special circumstances such as a node being down and reconnecting, there may be some blocks that haven't been synced (gaps).
 
-In this situation, fast syncing through the reverse chain method of the p2p network can be employed. This involves using libp2p's native streaming to establish connections with other p2p nodes while sending sync requests. [More details can be found here](https://github.com/joohhnnn/Understanding-Optimism-Codebase-CN/blob/main/sequencer/02-how-optimism-use-libp2p.md#%E5%BD%93%E5%AD%98%E5%9C%A8%E7%BC%BA%E5%A4%B1%E5%8C%BA%E5%9D%97%E9%80%9A%E8%BF%87p2p%E5%BF%AB%E9%80%9F%E5%90%8C%E6%AD%A5).
+In this situation, fast syncing through the reverse chain method of the p2p network can be employed. This involves using libp2p's native streaming to establish connections with other p2p nodes while sending sync requests. [More details can be found here](https://github.com/joohhnnn/Understanding-Optimism-Codebase/blob/main/sequencer/02-how-optimism-use-libp2p.md#quick-sync-via-p2p-when-blocks-are-missing).
 
 ## Execution Layer (EL, also known as engine sync) sync
 
