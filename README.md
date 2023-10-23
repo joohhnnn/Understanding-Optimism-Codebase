@@ -9,7 +9,7 @@ This document provides a comprehensive explanation of the Optimism codebase, aim
 - [**01-how-block-sync**](https://github.com/joohhnnn/Understanding-Optimism-Codebase/blob/main/sequencer/01-how-block-sync.md)
 - [**02-how-optimism-use-libp2p**](https://github.com/joohhnnn/Understanding-Optimism-Codebase/blob/main/sequencer/02-how-optimism-use-libp2p.md)
 - [**03-how-op-batcher-works**](https://github.com/joohhnnn/Understanding-Optimism-Codebase/blob/main/sequencer/03-how-batcher-works.md)
-- [**04-how-derivation-works**](https://github.com/joohhnnn/Understanding-Optimism-Codebase/blob/main/sequencer/04-how-derivation-works.mdr)
+- [**04-how-derivation-works**](https://github.com/joohhnnn/Understanding-Optimism-Codebase/blob/main/sequencer/04-how-derivation-works.md)
 
 ### Working on：
 - [op-proposer](https://github.com/joohhnnn/Understanding-Optimism-Codebase/tree/main/op-proposer): L2-Output Submitter, submits proposals to L1
