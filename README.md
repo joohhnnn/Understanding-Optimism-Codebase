@@ -4,7 +4,7 @@ This document provides a comprehensive explanation of the Optimism codebase, aim
 
 
 ## Project Directory
-### Finished
+### Finished：
 - [**00-how-sequencer-generates-L2-blocks**](https://github.com/joohhnnn/Understanding-Optimism-Codebase/blob/main/sequencer/00-how-sequencer-generates-L2-blocks.md)
 - [**01-how-block-sync**](https://github.com/joohhnnn/Understanding-Optimism-Codebase/blob/main/sequencer/01-how-block-sync.md)
 - [**02-how-optimism-use-libp2p**](https://github.com/joohhnnn/Understanding-Optimism-Codebase/blob/main/sequencer/02-how-optimism-use-libp2p.md)
