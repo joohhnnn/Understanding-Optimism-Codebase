@@ -14,7 +14,6 @@ This document provides a comprehensive explanation of the Optimism codebase, aim
 ### Working on：
 - [op-proposer](https://github.com/joohhnnn/Understanding-Optimism-Codebase/tree/main/op-proposer): L2-Output Submitter, submits proposals to L1
 ### TODO：
-- [op-bindings](https://github.com/joohhnnn/Understanding-Optimism-Codebase/tree/main/op-bindings): Go bindings for Bedrock smart contracts.
 - [op-challenger](https://github.com/joohhnnn/Understanding-Optimism-Codebase/tree/main/op-challenger): Dispute game challenge agent
 - [op-e2e](https://github.com/joohhnnn/Understanding-Optimism-Codebase/tree/main/op-e2e): End-to-End testing of all bedrock components in Go
 - [op-exporter](https://github.com/joohhnnn/Understanding-Optimism-Codebase/tree/main/op-exporter): Prometheus exporter client
