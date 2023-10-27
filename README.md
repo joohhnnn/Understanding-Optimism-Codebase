@@ -10,9 +10,10 @@ This document provides a comprehensive explanation of the Optimism codebase, aim
 - [**02-how-optimism-use-libp2p**](https://github.com/joohhnnn/Understanding-Optimism-Codebase/blob/main/sequencer/02-how-optimism-use-libp2p.md)
 - [**03-how-op-batcher-works**](https://github.com/joohhnnn/Understanding-Optimism-Codebase/blob/main/sequencer/03-how-batcher-works.md)
 - [**04-how-derivation-works**](https://github.com/joohhnnn/Understanding-Optimism-Codebase/blob/main/sequencer/04-how-derivation-works.md)
+- [**05-how-op-proposer-works**](https://github.com/joohhnnn/Understanding-Optimism-Codebase/blob/main/sequencer/05-how-proposer-works.md)
 
 ### Working on：
-- [op-proposer](https://github.com/joohhnnn/Understanding-Optimism-Codebase/tree/main/op-proposer): L2-Output Submitter, submits proposals to L1
+- [op-program](https://github.com/joohhnnn/Understanding-Optimism-Codebase/tree/main/op-program): Fault proof program
 ### TODO：
 - [op-challenger](https://github.com/joohhnnn/Understanding-Optimism-Codebase/tree/main/op-challenger): Dispute game challenge agent
 - [op-e2e](https://github.com/joohhnnn/Understanding-Optimism-Codebase/tree/main/op-e2e): End-to-End testing of all bedrock components in Go
