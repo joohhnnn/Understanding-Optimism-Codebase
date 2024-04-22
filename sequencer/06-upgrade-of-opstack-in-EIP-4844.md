@@ -9,7 +9,9 @@ EIP-4844 introduces a data format called "blob," which does not participate in E
 
 For further reading, please refer to the following articles:
 [Ethereum Evolved: Dencun Upgrade Part 5, EIP-4844](https://consensys.io/blog/ethereum-evolved-dencun-upgrade-part-5-eip-4844)
+
 [EIP-4844, Blobs, and Blob Gas: What you need to know](https://www.blocknative.com/blog/eip-4844-blobs-and-blob-gas-what-you-need-to-know)
+
 [Proto-Danksharding](https://notes.ethereum.org/@vbuterin/proto_danksharding_faq#Proto-Danksharding-FAQ)
 
 ## Application of OP-Stack
@@ -33,6 +35,7 @@ In this update of OP-Stack, the main changes in logic involve converting data pr
 ### Blob-related Definitions and Encoding/Decoding Implementation
 
 [Pull Request(8131) blob definition](https://github.com/ethereum-optimism/optimism/pull/8131/files#diff-30107b16d72d6e958093d83b5d736522a7994cab064187562605c82174400cd5)
+
 [Pull Request(8767) encoding & decoding](https://github.com/ethereum-optimism/optimism/commit/78ecdf523026d0afa45c519524a15b83cbe162c8#diff-30107b16d72d6e958093d83b5d736522a7994cab064187562605c82174400cd5R86)
 
 #### Defining blob
