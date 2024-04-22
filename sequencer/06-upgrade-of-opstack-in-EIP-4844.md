@@ -8,6 +8,7 @@ TL;DR:
 EIP-4844 introduces a data format called "blob," which does not participate in EVM execution but is stored in the consensus layer. Each data blob has a lifespan of 4096 epochs (about 18 days). Blobs exist on the L1 mainnet, carried by a new type of transaction known as type3, with each block capable of accommodating up to six blobs, and each transaction able to carry six blobs.
 
 For further reading, please refer to the following articles:
+
 [Ethereum Evolved: Dencun Upgrade Part 5, EIP-4844](https://consensys.io/blog/ethereum-evolved-dencun-upgrade-part-5-eip-4844)
 
 [EIP-4844, Blobs, and Blob Gas: What you need to know](https://www.blocknative.com/blog/eip-4844-blobs-and-blob-gas-what-you-need-to-know)
