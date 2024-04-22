@@ -12,7 +12,7 @@ This document provides a comprehensive explanation of the Optimism codebase, aim
 - [**03-how-op-batcher-works**](https://github.com/joohhnnn/Understanding-Optimism-Codebase/blob/main/sequencer/03-how-batcher-works.md)
 - [**04-how-derivation-works**](https://github.com/joohhnnn/Understanding-Optimism-Codebase/blob/main/sequencer/04-how-derivation-works.md)
 - [**05-how-op-proposer-works**](https://github.com/joohhnnn/Understanding-Optimism-Codebase/blob/main/sequencer/05-how-proposer-works.md)
-  [**06-upgrade-of-opstack-in-EIP-4844**](https://github.com/joohhnnn/Understanding-Optimism-Codebase/blob/main/sequencer/06-upgrade-of-opstack-in-EIP-4844.md)
+- [**06-upgrade-of-opstack-in-EIP-4844**](https://github.com/joohhnnn/Understanding-Optimism-Codebase/blob/main/sequencer/06-upgrade-of-opstack-in-EIP-4844.md)
 
 ### Working on：
 
