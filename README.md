@@ -13,7 +13,8 @@ This document provides a comprehensive explanation of the Optimism codebase, aim
 - [**04-how-derivation-works**](https://github.com/joohhnnn/Understanding-Optimism-Codebase/blob/main/sequencer/04-how-derivation-works.md)
 - [**05-how-op-proposer-works**](https://github.com/joohhnnn/Understanding-Optimism-Codebase/blob/main/sequencer/05-how-proposer-works.md)
 - [**06-upgrade-of-opstack-in-EIP-4844**](https://github.com/joohhnnn/Understanding-Optimism-Codebase/blob/main/sequencer/06-upgrade-of-opstack-in-EIP-4844.md)
-
+- [**07-what-is-fault-proof**](https://github.com/joohhnnn/The-book-of-optimism-fault-proof/blob/main/01-what-is-fault-proof.md)
+- [**08-fault-dispute-game**](https://github.com/joohhnnn/The-book-of-optimism-fault-proof/blob/main/02-fault-dispute-game.md)
 ### Working on：
 
 - [op-program](https://github.com/joohhnnn/Understanding-Optimism-Codebase/tree/main/op-program): Fault proof program
