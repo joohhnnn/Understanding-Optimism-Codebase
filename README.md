@@ -18,8 +18,12 @@ This document provides a comprehensive explanation of the Optimism codebase, aim
 - [**09-cannon**](https://github.com/joohhnnn/The-book-of-optimism-fault-proof/blob/main/03-cannon.md)
 - [**10-op-program**](https://github.com/joohhnnn/The-book-of-optimism-fault-proof/blob/main/04-op-program.md)
 - [**11-op-challenger**](https://github.com/joohhnnn/The-book-of-optimism-fault-proof/blob/main/05-op-challenger.md)
+  
+---
 
 ### [The-book-of-optimism-fault-proof](https://github.com/joohhnnn/The-book-of-optimism-fault-proof)
+
+---
 
 ### TODO：
 
