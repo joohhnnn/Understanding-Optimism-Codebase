@@ -15,17 +15,17 @@ This document provides a comprehensive explanation of the Optimism codebase, aim
 - [**06-upgrade-of-opstack-in-EIP-4844**](https://github.com/joohhnnn/Understanding-Optimism-Codebase/blob/main/sequencer/06-upgrade-of-opstack-in-EIP-4844.md)
 - [**07-what-is-fault-proof**](https://github.com/joohhnnn/The-book-of-optimism-fault-proof/blob/main/01-what-is-fault-proof.md)
 - [**08-fault-dispute-game**](https://github.com/joohhnnn/The-book-of-optimism-fault-proof/blob/main/02-fault-dispute-game.md)
-### Working on：
+- [**09-cannon**](https://github.com/joohhnnn/The-book-of-optimism-fault-proof/blob/main/03-cannon.md)
+- [**10-op-program**](https://github.com/joohhnnn/The-book-of-optimism-fault-proof/blob/main/04-op-program.md)
+- [**11-op-challenger**](https://github.com/joohhnnn/The-book-of-optimism-fault-proof/blob/main/05-op-challenger.md)
 
-- [op-program](https://github.com/joohhnnn/Understanding-Optimism-Codebase/tree/main/op-program): Fault proof program
+### [The-book-of-optimism-fault-proof](https://github.com/joohhnnn/The-book-of-optimism-fault-proof)
 
 ### TODO：
 
-- [op-challenger](https://github.com/joohhnnn/Understanding-Optimism-Codebase/tree/main/op-challenger): Dispute game challenge agent
 - [op-e2e](https://github.com/joohhnnn/Understanding-Optimism-Codebase/tree/main/op-e2e): End-to-End testing of all bedrock components in Go
 - [op-exporter](https://github.com/joohhnnn/Understanding-Optimism-Codebase/tree/main/op-exporter): Prometheus exporter client
 - [op-heartbeat](https://github.com/joohhnnn/Understanding-Optimism-Codebase/tree/main/op-heartbeat): Heartbeat monitor service
-- [op-program](https://github.com/joohhnnn/Understanding-Optimism-Codebase/tree/main/op-program): Fault proof program
 - [op-service](https://github.com/joohhnnn/Understanding-Optimism-Codebase/tree/main/op-service): Common codebase utilities
 - [op-wheel](https://github.com/joohhnnn/Understanding-Optimism-Codebase/tree/main/op-wheel): Database utilities
 
