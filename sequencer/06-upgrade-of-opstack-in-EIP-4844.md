@@ -54,7 +54,7 @@ It's important to note that these specs correspond to the latest version of the 
 Here is part of Pull Request(8767) with code snippets:
 By iterating 4096 times, it reads a total of 31*4096 bytes of data, which are then added to the blob.
 
-```
+```go
 func (b *Blob) FromData(data Data) error {
 	if len(data) > MaxBlobDataSize {
 		return fmt.Errorf("data is too large for blob. len=%v", len(data))
@@ -83,7 +83,7 @@ func (b *Blob) FromData(data Data) error {
 
 blob data decoding follows the same principles as the data encoding mentioned above.
 
-```
+```go
 func (b *Blob) ToData() (Data, error) {
 	data := make(Data, 4096*32)
 	for i := 0; i < 4096; i++ {
@@ -109,7 +109,7 @@ func (b *Blob) ToData() (Data, error) {
 
 #### flag configuration
 
-```
+```go
 switch c.DataAvailabilityType {
 case flags.CalldataType:
 case flags.BlobsType:
@@ -122,7 +122,7 @@ default:
 
 BatchSubmitter's functionality has expanded from just sending calldata to deciding whether to send calldata or blob-type data, depending on the situation. Blob-type data is encoded within blobTxCandidate using the previously mentioned FromData (blob-encode) function.
 
-```
+```go
 func (l *BatchSubmitter) sendTransaction(txdata txData, queue *txmgr.Queue[txData], receiptsCh chan txmgr.TxReceipt[txData]) error {
 	// Do the gas estimation offline. A value of 0 will cause the [txmgr] to estimate the gas limit.
 	data := txdata.Bytes()
@@ -173,7 +173,7 @@ func (l *BatchSubmitter) blobTxCandidate(data []byte) (*txmgr.TxCandidate, error
 
 GetBlob is responsible for retrieving blob data, its main logic includes using 4096 field elements to construct a complete blob and verifying its correctness through commitment. Additionally, GetBlob also participates in the [upper layer L1Retrieval logic process.](https://github.com/joohhnnn/Understanding-Optimism-Codebase/blob/main/sequencer/04-how-derivation-works.md)
 
-```
+```go
 func (p *PreimageOracle) GetBlob(ref eth.L1BlockRef, blobHash eth.IndexedBlobHash) *eth.Blob {
 	// Send a hint for the blob commitment & blob field elements.
 	blobReqMeta := make([]byte, 16)

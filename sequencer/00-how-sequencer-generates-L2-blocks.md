@@ -750,7 +750,7 @@ The third step, `NewPayload` method,
 		}
 		…
 	}
-```go
+```
 
 At this point, based on the payload parameters that have been finally confirmed, a block is constructed. Following this, the block is inserted into our blockchain.
 
