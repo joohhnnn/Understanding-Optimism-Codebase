@@ -246,15 +246,15 @@ Before we delve into `PreparePayloadAttributes`, we first need to understand two
 
 #### Sequencing Window
 
-In the merged Ethereum network, the fixed block time for L1 is 12 seconds, while for L2, it is 2 seconds. Based on this setting, we can define the concept of a “Sequencing Window” and elucidate it through an example:
+In the merged Ethereum network, the fixed block time for L1 is 12 seconds, and an L1 epoch consists of 32 L1 blocks (note that the concept of L1's Epoch here differs from the Sequencing Epoch described below). L2's block time is 2 seconds. Based on this setup, we can define the concept of the “Sequencing Window” and illustrate it with an example:
 
-- **Example**: If we set a “Sequencing Window” to encompass 5 L1 blocks, then the total time for this window would be 60 seconds (12 seconds/block × 5 blocks = 60 seconds). Within this 60-second timeframe, theoretically, 30 L2 blocks can be produced (60 seconds/2 seconds = 30).
+- **Example**: If we set a “Sequencing Window” to 3600 L1 blocks, the total duration of this window would be 43,200 seconds (12 seconds per block × 3600 blocks = 43,200 seconds). During this 43,200 seconds | 12 hours, theoretically, 21,600 L2 blocks could be generated (43,200 seconds / 2 seconds = 21,600). A Sequencing Epoch refers to the period of 21,600 seconds on L2 from (Block N to Block N + 21,600).
 
 #### Sequencing Epoch
 
-A “Sequencing Epoch” is a series of L2 blocks derived based on a specific “Sequencing Window”.
+The "Sequencing Epoch" refers to a series of L2 blocks derived based on a specific "Sequencing Window".
 
-- **Example**: In a “Sequencing Window” that encompasses 5 L1 blocks, it means it covers a 60-second timeframe (12 seconds/block × 5 blocks). Within this period, theoretically, 30 L2 blocks can be generated (60 seconds ÷ 2 seconds/block = 30 blocks).
+- **Example**: Same as the example above in Sequencing Window.
 
 ### Adapting to Network Changes
 
