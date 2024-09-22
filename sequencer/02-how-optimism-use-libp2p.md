@@ -406,6 +406,59 @@ Thus, a new payload has entered the gossip network.
 
 Within libp2p's pubsub system, nodes first receive messages from other nodes and then check the validity of those messages. If the message is valid and aligns with the node's subscription criteria, the node considers forwarding it to other nodes. Based on certain strategies, such as network topology and the subscriptions of nodes, a node decides whether or not to forward a message. If it decides to forward, the node sends the message to all nodes it's connected to that have subscribed to the same topic. During forwarding, to prevent the message from looping infinitely within the network, there are typically mechanisms in place to track already forwarded messages, ensuring a message isn't forwarded multiple times. Additionally, a message might have a "Time To Live" (TTL) attribute, which defines the number or time a message can be forwarded in the network. Every time a message is forwarded, its TTL value decreases until it's no longer forwarded. Regarding validation, messages typically go through some validation processes, such as checking the message's signature and format, to ensure its integrity and authenticity. In libp2p's pubsub model, this process ensures widespread propagation of messages to many nodes in the network while preventing infinite loops and network congestion, achieving efficient message delivery and processing.
 
+#### Block Validation
+
+Similar to L1, nodes validate blocks upon receipt. The major difference in Optimism is that, while in L1 the validation involves signatures from multiple selected beacon nodes, in Optimism it only involves the signature of the sequencer node.
+
+Let's illustrate this with the process of signing and verifying signatures:
+
+- When the sequencer publishes a block via the P2P network, the sequencer signs the block.
+```golang
+
+func (p *publisher) PublishL2Payload(ctx context.Context, envelope *eth.ExecutionPayloadEnvelope, signer Signer) error {
+……
+	sig, err := signer.Sign(ctx, SigningDomainBlocksV1, p.cfg.L2ChainID, payloadData)
+	if err != nil {
+		return fmt.Errorf("failed to sign execution payload with signer: %w", err)
+	}
+	copy(data[:65], sig[:])
+
+……
+
+```
+
+- When a verifier receives the block, they check if the signer is the sequencer's signing address.
+```golang
+func verifyBlockSignature(log log.Logger, cfg *rollup.Config, runCfg GossipRuntimeConfig, id peer.ID, signatureBytes []byte, payloadBytes []byte) pubsub.ValidationResult {
+	signingHash, err := BlockSigningHash(cfg, payloadBytes)
+	if err != nil {
+		log.Warn("failed to compute block signing hash", "err", err, "peer", id)
+		return pubsub.ValidationReject
+	}
+
+	pub, err := crypto.SigToPub(signingHash[:], signatureBytes)
+	if err != nil {
+		log.Warn("invalid block signature", "err", err, "peer", id)
+		return pubsub.ValidationReject
+	}
+	addr := crypto.PubkeyToAddress(*pub)
+
+	// In the future we may load & validate block metadata before checking the signature.
+	// And then check the signer based on the metadata, to support e.g. multiple p2p signers at the same time.
+	// For now we only have one signer at a time and thus check the address directly.
+	// This means we may drop old payloads upon key rotation,
+	// but this can be recovered from like any other missed unsafe payload.
+	if expected := runCfg.P2PSequencerAddress(); expected == (common.Address{}) {
+		log.Warn("no configured p2p sequencer address, ignoring gossiped block", "peer", id, "addr", addr)
+		return pubsub.ValidationIgnore
+	} else if addr != expected {
+		log.Warn("unexpected block author", "err", err, "peer", id, "addr", addr, "expected", expected)
+		return pubsub.ValidationReject
+	}
+	return pubsub.ValidationAccept
+}
+```
+
 #### Quick Sync via p2p when Blocks are Missing
 
 When a node, due to special circumstances like going down and reconnecting, might end up with some unsynchronized blocks (gaps), it can quickly sync using the p2p network's reverse chain method.
