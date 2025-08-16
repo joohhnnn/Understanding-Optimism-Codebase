@@ -11,6 +11,8 @@ On a more macroscopic level, the sequencer, during the L2 block generation proce
 
 After the operation node (opnode) starts up, the Driver initiates an event loop. Within this event loop, we have defined the `sequencerCh` channel and the `planSequencerAction` method.
 
+> **Source Code**: [op-node/rollup/driver/state.go (v1.0.9)](https://github.com/ethereum-optimism/optimism/blob/v1.0.9/op-node/rollup/driver/state.go#L191-L200)
+
 ```go
 sequencerTimer := time.NewTimer(0)
 var sequencerCh <-chan time.Time
@@ -33,6 +35,8 @@ Here, "delay time" is an important concept. It dictates the amount of time to wa
 ### Event Loop Circular Structure
 
 In the for loop of the event loop, a series of checks are performed initially. For example, we check whether the sequencer is enabled and whether the L1 state is ready, to determine if the next sequencer operation can be triggered.
+
+> **Source Code**: [op-node/rollup/driver/state.go (v1.0.9)](https://github.com/ethereum-optimism/optimism/blob/v1.0.9/op-node/rollup/driver/state.go#L209-L235)
 
 ```go
 for {    
@@ -76,6 +80,8 @@ During the checking process, the timer was set for the first time through `planS
 
 Next, let's take a look at the following part of the code:
 
+> **Source Code**: [op-node/rollup/driver/state.go (v1.0.9)](https://github.com/ethereum-optimism/optimism/blob/v1.0.9/op-node/rollup/driver/state.go#L245-L259)
+
 ```go
 	select {
 	case <-sequencerCh:
@@ -98,6 +104,8 @@ Next, let's take a look at the following part of the code:
 This part of the code is triggered when the timer, set previously, reaches the predetermined time and sends out a signal. It first attempts to execute the next sequencing action. If this action succeeds, it tries to disseminate the newly created payload through the network. Regardless of the outcome, it eventually invokes the `planSequencerAction` function to schedule the next sequencing action, thereby establishing a continuous loop to manage the sequencing actions.
 
 Next, let us examine the contents of the triggered `RunNextSequencerAction` function.
+
+> **Source Code**: [op-node/rollup/driver/sequencer.go (v1.0.9)](https://github.com/ethereum-optimism/optimism/blob/v1.0.9/op-node/rollup/driver/sequencer.go#L199-L255)
 
 ```go
 	// RunNextSequencerAction starts new block building work, or seals existing work,
