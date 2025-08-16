@@ -2,6 +2,16 @@
 
 This document provides a comprehensive explanation of the Optimism codebase, aiming to help newcomers to Optimism quickly get started and truly understand how the code flow in the codebase works.
 
+## 📌 Code Version Information
+
+All code examples in this documentation are based on **Optimism v1.0.9** version.
+
+- **GitHub Repository**: [ethereum-optimism/optimism](https://github.com/ethereum-optimism/optimism)
+- **Version Tag**: [v1.0.9](https://github.com/ethereum-optimism/optimism/tree/v1.0.9)
+- **Release Date**: July 2023
+
+> ⚠️ **Note**: Since the Optimism codebase is continuously updated, the current latest version's code structure may differ from the examples in this documentation. Readers are advised to refer to the corresponding version's code when studying.
+
 ## Project Directory
 
 ### Finished：
