@@ -220,6 +220,7 @@ Let's highlight the crucial steps, primarily divided into two parts: one is comp
 
 First, let's look at the process of starting a new block build.
 
+> **Source Code**: [op-node/rollup/driver/sequencer.go (v1.0.9)](https://github.com/ethereum-optimism/optimism/blob/v1.0.9/op-node/rollup/driver/sequencer.go#L63)
 ```go
 	func (d *Sequencer) StartBuildingBlock(ctx context.Context) error {
 	…
@@ -274,10 +275,13 @@ Through such a design, the system can flexibly and efficiently adjust the block 
 
 In the function below, we can see that the passed-in epoch parameter is `l1Origin.ID()`. This aligns with our definition of epoch numbering. The function is responsible for preparing all the necessary attributes for creating a new L2 block.
 
+> **Source Code**: [op-node/rollup/driver/sequencer.go (v1.0.9)](https://github.com/ethereum-optimism/optimism/blob/v1.0.9/op-node/rollup/driver/sequencer.go#L63)
 
 ```go
 	attrs, err := d.attrBuilder.PreparePayloadAttributes(fetchCtx, l2Head, l1Origin.ID())
 ```
+
+> **Source Code**: [op-node/rollup/derive/attributes.go (v1.0.9)](https://github.com/ethereum-optimism/optimism/blob/v1.0.9/op-node/rollup/derive/attributes.go#L46)
 
 ```go
 	func (ba *FetchingAttributesBuilder) PreparePayloadAttributes(ctx context.Context, l2Parent eth.L2BlockRef, epoch eth.BlockID) (attrs *eth.PayloadAttributes, err error) {
@@ -361,6 +365,8 @@ As illustrated in the code, the `PreparePayloadAttributes` is tasked with prepar
 
 Having acquired the attributes, we proceed further down.
 
+> **Source Code**: [op-node/rollup/driver/sequencer.go (v1.0.9)](https://github.com/ethereum-optimism/optimism/blob/v1.0.9/op-node/rollup/driver/sequencer.go#L92)
+
 ```go
 	attrs.NoTxPool = uint64(attrs.Timestamp) > l1Origin.Time+d.config.MaxSequencerDrift
 ```
@@ -368,6 +374,8 @@ Having acquired the attributes, we proceed further down.
 Determining whether it is necessary to produce an empty block, note that even here, the empty block will at least include L1 information deposits and any user deposits. If it is required to produce an empty block, we handle it by setting NoTxPool to true, which will result in the sequencer excluding any transactions from the transaction pool.
 
 Next, the `StartPayload` is called to initiate the building of this payload.
+
+> **Source Code**: [op-node/rollup/driver/sequencer.go (v1.0.9)](https://github.com/ethereum-optimism/optimism/blob/v1.0.9/op-node/rollup/driver/sequencer.go#L99)
 
 ```go
 	errTyp, err := d.engine.StartPayload(ctx, l2Head, attrs, false)
@@ -379,6 +387,8 @@ Next, the `StartPayload` is called to initiate the building of this payload.
 #### StartPayload Function
 
 The `StartPayload` mainly triggers a ForkchoiceUpdate and updates some of the building states in the EngineQueue, such as the buildingID, etc. Subsequently, when `RunNextSequencerAction` is run again, it will find the ID that is being built based on this ID.
+
+> **Source Code**: [op-node/rollup/derive/engine_queue.go (v1.0.9)](https://github.com/ethereum-optimism/optimism/blob/v1.0.9/op-node/rollup/derive/engine_queue.go#L605)
 
 ```go
 	func (eq *EngineQueue) StartPayload(ctx context.Context, parent eth.L2BlockRef, attrs *eth.PayloadAttributes, updateSafe bool) (errType BlockInsertionErrType, err error) {
@@ -404,6 +414,8 @@ The `StartPayload` mainly triggers a ForkchoiceUpdate and updates some of the bu
 		return BlockInsertOK, nil
 	}
 ```
+> **Source Code**: [op-node/rollup/derive/engine_update.go (v1.0.9)](https://github.com/ethereum-optimism/optimism/blob/v1.0.9/op-node/rollup/derive/engine_update.go#L84)
+
 ```go
    func StartPayload(ctx context.Context, eng Engine, fc eth.ForkchoiceState, attrs *eth.PayloadAttributes) (id eth.PayloadID, errType BlockInsertionErrType, err error) {
 	…
@@ -434,6 +446,8 @@ Next, we turn our focus to the implementation of the `forkchoiceUpdated` functio
 In op-geth, the function responsible for handling this request is the `forkchoiceUpdated` function. This function first obtains and verifies various blocks related to the provided fork choice state. Then, it creates a new payload (i.e., a new block) based on this information and optional payload attributes. If the payload creation succeeds, it will return a valid response containing the new payload ID; otherwise, it will return an error. 
 
 Here is the key code:
+
+> **Source Code**: [eth/catalyst/api.go (op-geth)](https://github.com/ethereum-optimism/op-geth/blob/9cc072e922f66d35b32a11e3751ecfd033b768f7/eth/catalyst/api.go#L205)
 
 ```go
 	if payloadAttributes != nil {
@@ -472,9 +486,12 @@ Here is the key code:
 		api.localBlocks.put(id, payload)
 		return valid(&id), nil
 	}
-
+```
 Here, we first load the payload that we created earlier in op-node into the 'args' variable, and then pass 'args' into the 'BuildPayload' function.
 
+> **Source Code**: [miner/payload_building.go (op-geth)](https://github.com/ethereum-optimism/op-geth/blob/9cc072e922f66d35b32a11e3751ecfd033b768f7/miner/payload_building.go#L172)
+
+```go
 	// buildPayload builds the payload according to the provided parameters.
 	func (w *worker) buildPayload(args *BuildPayloadArgs) (*Payload, error) {
 		// Build the initial version with no transaction included. It should be fast
@@ -546,6 +563,8 @@ In this way, the `buildPayload` function ensures a quickly available initial pay
 So how does it work when `args.NoTxPool` is false?
 The answer is hidden in the `getSealingBlock` function.
 
+> **Source Code**: [miner/worker.go (op-geth)](https://github.com/ethereum-optimism/op-geth/blob/9cc072e922f66d35b32a11e3751ecfd033b768f7/miner/worker.go#L1252)
+
 ```go
 	func (w *worker) getSealingBlock(parent common.Hash, timestamp uint64, coinbase common.Address, random common.Hash, withdrawals types.Withdrawals, noTxs bool, transactions types.Transactions, gasLimit *uint64) (*types.Block, *big.Int, error) {
 		req := &getWorkReq{
@@ -578,6 +597,8 @@ The answer is hidden in the `getSealingBlock` function.
 
 In this section, we see that the `mainLoop` function receives new Payload creation requests by listening to the `getWorkCh` channel. Once a request is received, it triggers the `generateWork` function to initiate the new Payload creation process.
 
+> **Source Code**: [miner/worker.go (op-geth)](https://github.com/ethereum-optimism/op-geth/blob/9cc072e922f66d35b32a11e3751ecfd033b768f7/miner/worker.go#L578)
+
 ```go
 	case req := <-w.getWorkCh:
 		block, fees, err := w.generateWork(req.params)
@@ -590,6 +611,8 @@ In this section, we see that the `mainLoop` function receives new Payload creati
 ### GenerateWork Function
 
 The `GenerateWork` function is the final step in the new Payload creation process. It is responsible for preparing the ground and creating the new block.
+
+> **Source Code**: [miner/worker.go (op-geth)](https://github.com/ethereum-optimism/op-geth/blob/9cc072e922f66d35b32a11e3751ecfd033b768f7/miner/worker.go#L1102)
 
 ```go
 
@@ -648,6 +671,8 @@ At the beginning stage, we first build a new block in the memory pool. Here, spe
 
 The key step in this is	
 
+> **Source Code**: [miner/worker.go (op-geth)](https://github.com/ethereum-optimism/op-geth/blob/9cc072e922f66d35b32a11e3751ecfd033b768f7/miner/worker.go#L1123)
+
 ```go
 	if !genParams.noTxs {
 		interrupt := new(atomic.Int32)
@@ -672,6 +697,8 @@ At the current stage, we have confirmed that the `buildingID` in the `EngineQueu
 Next, due to the timer set at the very beginning, the sequencer triggers and calls the `RunNextSequencerAction` method again. 
 It enters the judgment, but this time, our `buildingID` already exists, so it enters the `CompleteBuildingBlock` stage.
 
+> **Source Code**: [op-node/rollup/driver/sequencer.go (v1.0.9)](https://github.com/ethereum-optimism/optimism/blob/v1.0.9/op-node/rollup/driver/sequencer.go#L199)
+
 ```go
 	if onto, buildingID, safe := d.engine.BuildingPayload(); buildingID != (eth.PayloadID{}) {
 			…
@@ -681,6 +708,7 @@ It enters the judgment, but this time, our `buildingID` already exists, so it en
 ```
 CompleteBuildingBlock calls the ConfirmPayload method internally
 
+> **Source Code**: [op-node/rollup/derive/engine_update.go (v1.0.9)](https://github.com/ethereum-optimism/optimism/blob/v1.0.9/op-node/rollup/derive/engine_update.go#L120)
 ```go
 	// ConfirmPayload ends an execution payload building process in the provided Engine, and persists the payload as the canonical head.
 	// If updateSafe is true, then the payload will also be recognized as safe-head at the same time.
@@ -714,6 +742,8 @@ The `engine_forkChoiceUpdatedV1` in the first step is the process we started bui
 
 The second step, `GetPayload` method, retrieves the `ExecutionPayload` of the block we built in the first step.
 
+> **Source Code**: [miner/payload_building.go (op-geth)](https://github.com/ethereum-optimism/op-geth/blob/9cc072e922f66d35b32a11e3751ecfd033b768f7/miner/payload_building.go#L130)
+
 ```go
 	// Resolve returns the latest built payload and also terminates the background
 	// thread for updating payload. It's safe to be called multiple times.
@@ -736,6 +766,8 @@ The second step, `GetPayload` method, retrieves the `ExecutionPayload` of the bl
 The `GetPayload` method stops the block's reconstruction by sending a signal to the `payload.stop` channel in the coroutine initiated in the first step. Meanwhile, it sends the latest block data (ExecutionPayload) back to the sequencer (op-node).
 
 The third step, `NewPayload` method,
+
+> **Source Code**: [eth/catalyst/api.go (op-geth)](https://github.com/ethereum-optimism/op-geth/blob/9cc072e922f66d35b32a11e3751ecfd033b768f7/eth/catalyst/api.go#L453)
 
 ```go
 	func (api *ConsensusAPI) newPayload(params engine.ExecutableData) (engine.PayloadStatusV1, error) {
@@ -764,6 +796,8 @@ At this point, based on the payload parameters that have been finally confirmed,
 
 The fourth step, `ForkchoiceUpdate` method,
 
+> **Source Code**: [eth/catalyst/api.go (op-geth)](https://github.com/ethereum-optimism/op-geth/blob/9cc072e922f66d35b32a11e3751ecfd033b768f7/eth/catalyst/api.go#L205)
+
 ```go
 	func (api *ConsensusAPI) forkchoiceUpdated(update engine.ForkchoiceStateV1, payloadAttributes *engine.PayloadAttributes) (engine.ForkChoiceResponse, error) {
 		…
@@ -791,6 +825,8 @@ The fourth step, `ForkchoiceUpdate` method,
 Through the `SetFinalized` process, the block generated from the previous steps is finalized. This method marks a specific block as "finalized." In blockchain networks, when a block is labeled as "finalized," it signifies that the block and all preceding blocks are irreversible, forever becoming a part of the blockchain. This is a vital security feature ensuring that once a block is finalized, it cannot be replaced by another fork.
 
 With this, the basic construction of an L2 block is completed. The subsequent task is to record this new L2 information in the sequencer. Let's return to the `ConfirmPayload` function to continue.
+
+> **Source Code**: [op-node/rollup/derive/engine_queue.go (v1.0.9)](https://github.com/ethereum-optimism/optimism/blob/v1.0.9/op-node/rollup/derive/engine_queue.go#L637)
 
 ```go
 		payload, errTyp, err := ConfirmPayload(ctx, eq.log, eq.engine, fc, eq.buildingID, eq.buildingSafe)
