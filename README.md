@@ -4,13 +4,18 @@ This document provides a comprehensive explanation of the Optimism codebase, aim
 
 ## 📌 Code Version Information
 
-All code examples in this documentation are based on **Optimism v1.0.9** version.
+### Main Documentation 
+All code examples in documents 00-05 are based on **Optimism v1.1.4** version.
 
 - **GitHub Repository**: [ethereum-optimism/optimism](https://github.com/ethereum-optimism/optimism)
-- **Version Tag**: [v1.0.9](https://github.com/ethereum-optimism/optimism/tree/v1.0.9)
-- **Release Date**: July 2023
+- **Version Tag**: [v1.1.4](https://github.com/ethereum-optimism/optimism/tree/v1.1.4)
+- **Release Date**: August 2023
+- **op-geth Version**: [commit 9cc072e](https://github.com/ethereum-optimism/op-geth/commit/9cc072e922f66d35b32a11e3751ecfd033b768f7) (for op-geth related code)
 
-> ⚠️ **Note**: Since the Optimism codebase is continuously updated, the current latest version's code structure may differ from the examples in this documentation. Readers are advised to refer to the corresponding version's code when studying.
+### EIP-4844 Documentation (06)
+Document 06 is based on specific PR commits from early 2024, as noted in the document.
+
+> ⚠️ **Note**: Since the Optimism codebase is continuously updated, the current latest version's code structure may differ from the examples in this documentation. All GitHub links have been verified for accuracy against their respective versions.
 
 ## Project Directory
 
