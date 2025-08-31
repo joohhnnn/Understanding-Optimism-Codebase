@@ -33,6 +33,8 @@ The `Start` function is called to initiate the `loop` cycle. In the loop, three 
 - Handle `receipts`, recording success or failure status.
 - Handle shutdown requests.
 
+> **Source Code**: [op-batcher/batcher/driver.go (v1.1.4)](https://github.com/ethereum-optimism/optimism/blob/v1.1.4/op-batcher/batcher/driver.go#L126)
+
 ```go
     func (l *BatchSubmitter) Start() error {
         l.log.Info("Starting Batch Submitter")
@@ -58,6 +60,8 @@ The `Start` function is called to initiate the `loop` cycle. In the loop, three 
         return nil
     }
 ```
+
+> **Source Code**: [op-batcher/batcher/driver.go (v1.1.4)](https://github.com/ethereum-optimism/optimism/blob/v1.1.4/op-batcher/batcher/driver.go#L286)
 
 ```go
     func (l *BatchSubmitter) loop() {
@@ -101,6 +105,8 @@ The `Start` function is called to initiate the `loop` cycle. In the loop, three 
 
 The `loadBlocksIntoState` function calls `calculateL2BlockRangeToStore` to get the range of newly generated `unsafeblocks` derived from the latest `safeblock` since the last `batch transaction` was sent. It then iterates over this range, and for each `unsafe` block, calls the `loadBlockIntoState` function to fetch it from L2 and loads it into the internal `block queue` via the `AddL2Block` function, awaiting further processing.
 
+> **Source Code**: [op-batcher/batcher/driver.go (v1.1.4)](https://github.com/ethereum-optimism/optimism/blob/v1.1.4/op-batcher/batcher/driver.go#L191)
+
 ```go
     func (l *BatchSubmitter) loadBlocksIntoState(ctx context.Context) error {
         start, end, err := l.calculateL2BlockRangeToStore(ctx)
@@ -124,6 +130,8 @@ The `loadBlocksIntoState` function calls `calculateL2BlockRangeToStore` to get t
     }
 ```
 
+> **Source Code**: [op-batcher/batcher/driver.go (v1.1.4)](https://github.com/ethereum-optimism/optimism/blob/v1.1.4/op-batcher/batcher/driver.go#L227)
+
 ```go
     func (l *BatchSubmitter) loadBlockIntoState(ctx context.Context, blockNumber uint64) (*types.Block, error) {
         ……
@@ -141,6 +149,8 @@ The `loadBlocksIntoState` function calls `calculateL2BlockRangeToStore` to get t
 `op-batcher/batcher/driver.go`
 
 The `publishTxToL1` function uses the `TxData` function to process the previously loaded data and calls the `sendTransaction` function to send it to L1.
+
+> **Source Code**: [op-batcher/batcher/driver.go (v1.1.4)](https://github.com/ethereum-optimism/optimism/blob/v1.1.4/op-batcher/batcher/driver.go#L356)
 
 ```go
     func (l *BatchSubmitter) publishTxToL1(ctx context.Context, queue *txmgr.Queue[txData], receiptsCh chan txmgr.TxReceipt[txData]) error {
@@ -178,6 +188,7 @@ The `TxData` function mainly handles two tasks:
 
 `EnsureChannelWithSpace` ensures that `currentChannel` is a `channel` with space to accommodate more data (i.e., `channel.IsFull` returns `false`). If `currentChannel` is null or full, a new `channel` is created.
 
+> **Source Code**: [op-batcher/batcher/channel_manager.go (v1.1.4)](https://github.com/ethereum-optimism/optimism/blob/v1.1.4/op-batcher/batcher/channel_manager.go#L136)
 
 ```go
     func (s *channelManager) TxData(l1Head eth.BlockID) (txData, error) {
@@ -230,6 +241,7 @@ The `TxData` function mainly handles two tasks:
 
 The `processBlocks` function internally adds the `blocks` from the `block queue` into the current `channel` via `AddBlock`.
 
+> **Source Code**: [op-batcher/batcher/channel_manager.go (v1.1.4)](https://github.com/ethereum-optimism/optimism/blob/v1.1.4/op-batcher/batcher/channel_manager.go#L215)
 
 ```go
     func (s *channelManager) processBlocks() error {
@@ -260,6 +272,7 @@ The `processBlocks` function internally adds the `blocks` from the `block queue`
 
 The `AddBlock` function first uses `BlockToBatch` to extract the `batch` from the `block`, and then compresses and stores the data using the `AddBatch` function.
 
+> **Source Code**: [op-batcher/batcher/channel_builder.go (v1.1.4)](https://github.com/ethereum-optimism/optimism/blob/v1.1.4/op-batcher/batcher/channel_builder.go#L192)
 
 ```go
     func (c *channelBuilder) AddBlock(block *types.Block) (derive.L1BlockInfo, error) {
