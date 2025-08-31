@@ -60,7 +60,7 @@ Defined and explained in `op-node/flags/flags.go`:
 - **SkipSyncStartCheck Flag (`--l2.skip-sync-start-check`)**:
     - This flag is used to skip the reasonableness check for the L1 origin consistency of unsafe L2 blocks when determining the sync starting point. When set to `true`, it defers the verification of L1 origin. If you are using `--l2.engine-sync`, it is recommended to enable this flag to skip the initial consistency check. Its default value is `false`, meaning that by default, this reasonableness check is enabled.
 
-> **Source Code**: [op-node/flags/flags.go (v1.0.9)](https://github.com/ethereum-optimism/optimism/blob/v1.0.9/op-node/flags/flags.go)
+> **Source Code**: [op-node/flags/flags.go (v1.1.4)](https://github.com/ethereum-optimism/optimism/blob/v1.1.4/op-node/flags/flags.go#L217)
 
 ```go
 	L2EngineSyncEnabled = &cli.BoolFlag{
@@ -89,7 +89,7 @@ Firstly, we have `op-node/rollup/derive/engine_queue.go`.
 
 `EngineSync` is the concrete representation of the `L2EngineSyncEnabled` flag. Here, it is nested within two check functions.
 
-> **Source Code**: [op-node/rollup/engine/engine_controller.go (v1.0.9)](https://github.com/ethereum-optimism/optimism/blob/v1.0.9/op-node/rollup/engine/engine_controller.go)
+> **Source Code**: [op-node/rollup/derive/engine_queue.go (v1.1.4)](https://github.com/ethereum-optimism/optimism/blob/v1.1.4/op-node/rollup/derive/engine_queue.go#L450)
 
 ```go
    // checkNewPayloadStatus checks returned status of engine_newPayloadV1 request for next unsafe payload.
@@ -155,7 +155,7 @@ In the `op-node/rollup/sync/start.go` directory:
 
 The `FindL2Heads` function backtracks from a given "start" point (i.e., a previous unsafe L2 block) to find these three types of blocks. During the backtracking, the function checks whether each L2 block's L1 origin matches the known L1 canonical chain, among other conditions and checks. This allows the function to more quickly determine the "safe" head of L2, potentially speeding up the entire sync process.
 
-> **Source Code**: [op-node/rollup/sync/start.go (v1.0.9)](https://github.com/ethereum-optimism/optimism/blob/v1.0.9/op-node/rollup/sync/start.go#L105)
+> **Source Code**: [op-node/rollup/sync/start.go (v1.1.4)](https://github.com/ethereum-optimism/optimism/blob/v1.1.4/op-node/rollup/sync/start.go#L106)
 
 ```go
    func FindL2Heads(ctx context.Context, cfg *rollup.Config, l1 L1Chain, l2 L2Chain, lgr log.Logger, syncCfg *Config) (result *FindHeadsResult, err error) {
@@ -213,7 +213,7 @@ This sync scenario occurs when you have a trusted l2 rpc node. You can communica
 
 Initialize rpcSync; if rpcSyncClient is set, assign it to rpcSync.
 
-> **Source Code**: [op-node/node/node.go (v1.0.9)](https://github.com/ethereum-optimism/optimism/blob/v1.0.9/op-node/node/node.go#L207)
+> **Source Code**: [op-node/node/node.go (v1.1.4)](https://github.com/ethereum-optimism/optimism/blob/v1.1.4/op-node/node/node.go#L207)
 
 ```go
    func (n *OpNode) initRPCSync(ctx context.Context, cfg *Config) error {
@@ -235,7 +235,7 @@ Initialize rpcSync; if rpcSyncClient is set, assign it to rpcSync.
 
 Initialize the node; if `rpcSync` is not null, start the rpcSync event loop.
 
-> **Source Code**: [op-node/node/node.go (v1.0.9)](https://github.com/ethereum-optimism/optimism/blob/v1.0.9/op-node/node/node.go#L282)
+> **Source Code**: [op-node/node/node.go (v1.1.4)](https://github.com/ethereum-optimism/optimism/blob/v1.1.4/op-node/node/node.go#L282)
 
 ```go
    func (n *OpNode) Start(ctx context.Context) error {
@@ -264,7 +264,7 @@ Initialize the node; if `rpcSync` is not null, start the rpcSync event loop.
 
 Once a signal (block number) is received in the `s.requests` channel, the `fetchUnsafeBlockFromRpc` function is called to fetch the corresponding block information from the RPC node.
 
-> **Source Code**: [op-node/sources/sync_client.go (v1.0.9)](https://github.com/ethereum-optimism/optimism/blob/v1.0.9/op-node/sources/sync_client.go#L128)
+> **Source Code**: [op-node/sources/sync_client.go (v1.1.4)](https://github.com/ethereum-optimism/optimism/blob/v1.1.4/op-node/sources/sync_client.go#L129)
 
 ```go
    // eventLoop is the main event loop for the sync client.
@@ -310,7 +310,7 @@ Once a signal (block number) is received in the `s.requests` channel, the `fetch
 
 Next, let's see where the signals are sent to the `s.requests` channel. In the same file, the `RequestL2Range` function introduces a range of blocks that need to be synchronized. The function then sends out these tasks one by one using a `for` loop.
 
-> **Source Code**: [op-node/sources/sync_client.go (v1.0.9)](https://github.com/ethereum-optimism/optimism/blob/v1.0.9/op-node/sources/sync_client.go#L92)
+> **Source Code**: [op-node/sources/sync_client.go (v1.1.4)](https://github.com/ethereum-optimism/optimism/blob/v1.1.4/op-node/sources/sync_client.go#L92)
 
 ```go
    func (s *SyncClient) RequestL2Range(ctx context.Context, start, end eth.L2BlockRef) error {
@@ -352,7 +352,7 @@ Next, let's see where the signals are sent to the `s.requests` channel. In the s
 
 In the outer `OpNode` type's implementation of the `RequestL2Range` method, it's clear to see that `rpcSync` type of reverse chain synchronization is prioritized.
 
-> **Source Code**: [op-node/node/node.go (v1.0.9)](https://github.com/ethereum-optimism/optimism/blob/v1.0.9/op-node/node/node.go#L376)
+> **Source Code**: [op-node/node/node.go (v1.1.4)](https://github.com/ethereum-optimism/optimism/blob/v1.1.4/op-node/node/node.go#L376)
 
 ```go
    func (n *OpNode) RequestL2Range(ctx context.Context, start, end eth.L2BlockRef) error {
