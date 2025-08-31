@@ -290,6 +290,8 @@ Gossip is used in distributed systems to ensure data consistency and address iss
 
 Let's first see where the node joins the gossip network. In `op-node/p2p/node.go`, during node initialization, the `init` method is called, which then invokes the JoinGossip method to join the gossip network.
 
+> **Source Code**: [op-node/p2p/node.go (v1.1.4)](https://github.com/ethereum-optimism/optimism/blob/v1.1.4/op-node/p2p/node.go#L73)
+
 ```go
     func (n *NodeP2P) init(resourcesCtx context.Context, rollupCfg *rollup.Config, log log.Logger, setup SetupP2P, gossipIn GossipIn, l2Chain L2Chain, runCfg GossipRuntimeConfig, metrics metrics.Metricer) error {
         …
@@ -375,6 +377,7 @@ Thus, a non-sequencer node's subscription is established. Next, let's shift our 
 
 Within the event loop, it waits for the generation of new payloads in sequencer mode (unsafe blocks) through a loop. Subsequently, this payload is propagated to the gossip network via `PublishL2Payload`.
 
+> **Source Code**: [op-node/rollup/driver/state.go (v1.1.4)](https://github.com/ethereum-optimism/optimism/blob/v1.1.4/op-node/rollup/driver/state.go#L268)
 
 ```go
     func (s *Driver) eventLoop() {
@@ -480,6 +483,8 @@ This code segment defines a method named `checkForGapInUnsafeQueue` which belong
 3. If a data gap is detected, the function tries to request the missing data range by calling `s.altSync.RequestL2Range(ctx, start, end)`. If `end` is a null reference (i.e., `eth.L2BlockRef{}`), the function requests a sync with an open-ended range starting from `start`.
 4. While making the data request, the function logs a debug message detailing the data range it's requesting.
 5. The function finally returns an error value. It will return `nil` if no error is present.
+
+> **Source Code**: [op-node/rollup/driver/state.go (v1.1.4)](https://github.com/ethereum-optimism/optimism/blob/v1.1.4/op-node/rollup/driver/state.go#L549)
 
 ```go
     // checkForGapInUnsafeQueue checks if there's a gap in the unsafe queue and tries to retrieve the missing payloads using an alt-sync method.
@@ -659,6 +664,8 @@ To prevent certain nodes from making malicious requests and responses that could
 
 For instance, in the file `op-node/p2p/app_scores.go`, there is a series of functions set up to score peers.
 
+> **Source Code**: [op-node/p2p/app_scores.go (v1.1.4)](https://github.com/ethereum-optimism/optimism/blob/v1.1.4/op-node/p2p/app_scores.go#L66)
+
 ```go
     func (s *peerApplicationScorer) onValidResponse(id peer.ID) {
         _, err := s.scorebook.SetScore(id, store.IncrementValidResponses{Cap: s.params.ValidResponseCap})
@@ -686,6 +693,8 @@ For instance, in the file `op-node/p2p/app_scores.go`, there is a series of func
 ```
 
 Then before adding a new node, its points will be checked
+
+> **Source Code**: [op-node/p2p/gating/scoring.go (v1.1.4)](https://github.com/ethereum-optimism/optimism/blob/v1.1.4/op-node/p2p/gating/scoring.go#L21)
 
 ```go
     func AddScoring(gater BlockingConnectionGater, scores Scores, minScore float64) *ScoringConnectionGater {
