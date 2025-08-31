@@ -158,7 +158,7 @@ This function is primarily used to set up the libp2p host and various configurat
 
 These key parts are responsible for the initialization and setup of the libp2p host, with each part catering to a specific aspect of the host's configuration.
 
-
+> **Source Code**: [op-node/p2p/host.go (v1.1.4)](https://github.com/ethereum-optimism/optimism/blob/v1.1.4/op-node/p2p/host.go#L133)
 
 ```go
     func (conf *Config) Host(log log.Logger, reporter metrics.Reporter, metrics HostMetrics) (host.Host, error) {
@@ -334,6 +334,8 @@ Below is a simple overview of the main operations executed within the `JoinGossi
 9. **Creation and Return of Publisher**:
    - An instance of `publisher` is created and returned, configured to use the provided configuration and block topic.
 
+> **Source Code**: [op-node/p2p/gossip.go (v1.1.4)](https://github.com/ethereum-optimism/optimism/blob/v1.1.4/op-node/p2p/gossip.go#L425)
+
 ```go
     func JoinGossip(p2pCtx context.Context, self peer.ID, ps *pubsub.PubSub, log log.Logger, cfg *rollup.Config, runCfg GossipRuntimeConfig, gossipIn GossipIn) (GossipOut, error) {
         val := guardGossipValidator(log, logValidationResult(self, "validated block", log, BuildBlocksValidator(log, cfg, runCfg)))
@@ -413,6 +415,9 @@ Similar to L1, nodes validate blocks upon receipt. The major difference in Optim
 Let's illustrate this with the process of signing and verifying signatures:
 
 - When the sequencer publishes a block via the P2P network, the sequencer signs the block.
+
+> **Source Code**: [op-node/p2p/gossip.go (v1.1.4)](https://github.com/ethereum-optimism/optimism/blob/v1.1.4/op-node/p2p/gossip.go#L394)
+
 ```golang
 
 func (p *publisher) PublishL2Payload(ctx context.Context, envelope *eth.ExecutionPayloadEnvelope, signer Signer) error {
@@ -428,6 +433,9 @@ func (p *publisher) PublishL2Payload(ctx context.Context, envelope *eth.Executio
 ```
 
 - When a verifier receives the block, they check if the signer is the sequencer's signing address.
+
+> **Source Code**: [op-node/p2p/gossip.go (v1.1.4)](https://github.com/ethereum-optimism/optimism/blob/v1.1.4/op-node/p2p/gossip.go#L338)
+
 ```golang
 func verifyBlockSignature(log log.Logger, cfg *rollup.Config, runCfg GossipRuntimeConfig, id peer.ID, signatureBytes []byte, payloadBytes []byte) pubsub.ValidationResult {
 	signingHash, err := BlockSigningHash(cfg, payloadBytes)
@@ -496,6 +504,8 @@ The `RequestL2Range` function passes the beginning and ending signals of the req
 
 It then distributes the request to the `peerRequests` channel through the `onRangeRequest` method. The `peerRequests` channel is awaited by loops opened by multiple peers, meaning each dispatch is handled by a single peer.
 
+> **Source Code**: [op-node/p2p/sync.go (v1.1.4)](https://github.com/ethereum-optimism/optimism/blob/v1.1.4/op-node/p2p/sync.go#L379)
+
 ```go
     func (s *SyncClient) onRangeRequest(ctx context.Context, req rangeRequest) {
             …
@@ -542,6 +552,8 @@ First and foremost, it's essential to understand that the connection or message 
 
 From the previous `init` function, we see code snippets like the following. Here, `MakeStreamHandler` returns a handling function. `SetStreamHandler` binds the protocol id with this handling function. Thus, every time the sending node creates and utilizes this stream, the returned handling function is triggered.
 
+> **Source Code**: [op-node/p2p/node.go (v1.1.4)](https://github.com/ethereum-optimism/optimism/blob/v1.1.4/op-node/p2p/node.go#L126)
+
 ```go
     n.syncSrv = NewReqRespServer(rollupCfg, l2Chain, metrics)
     // register the sync protocol with libp2p host
@@ -553,6 +565,7 @@ Now, let's delve into how the handler function processes the request.
 
 The function first performs global and personal rate-limiting checks to control the speed of handling requests. It then reads and verifies the block number of the request, ensuring it falls within a reasonable range. Subsequently, the function retrieves the requested block payload from the L2 layer and writes it into the response stream. While writing the response data, it sets a write deadline to prevent being blocked by slow peer connections during the write process. Ultimately, the function returns the requested block number and any potential errors.
 
+> **Source Code**: [op-node/p2p/sync.go (v1.1.4)](https://github.com/ethereum-optimism/optimism/blob/v1.1.4/op-node/p2p/sync.go#L732)
 
 ```go
     func (srv *ReqRespServer) handleSyncRequest(ctx context.Context, stream network.Stream) (uint64, error) {
