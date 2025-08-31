@@ -155,6 +155,8 @@ This function uses the `NextData` function to obtain the data from the previous 
 
 The `NextData` function is responsible for reading and returning the `raw data` from the first `channel` in the current `channel bank`. It also calls `NextFrame` to fetch the `frame` and load it into the `channel`.
 
+> **Source Code**: [op-node/rollup/derive/channel_bank.go (v1.1.4)](https://github.com/ethereum-optimism/optimism/blob/v1.1.4/op-node/rollup/derive/channel_bank.go#L158)
+
 ```go
     func (cb *ChannelBank) NextData(ctx context.Context) ([]byte, error) {
         // Do the read from the channel bank first
@@ -184,6 +186,7 @@ The `NextData` function is responsible for reading and returning the `raw data` 
 
 The `NextBatch` function mainly decodes the previously fetched `raw data` into data with a `batch` structure and returns it. The role of the `WriteChannel` function is to provide a function and assign it to `nextBatchFn`. The purpose of this function is to create a reader, decode data with a `batch` structure from the reader, and return it.
 
+> **Source Code**: [op-node/rollup/derive/channel_in_reader.go (v1.1.4)](https://github.com/ethereum-optimism/optimism/blob/v1.1.4/op-node/rollup/derive/channel_in_reader.go#L63)
 
 ```go
     func (cr *ChannelInReader) NextBatch(ctx context.Context) (*BatchData, error) {
