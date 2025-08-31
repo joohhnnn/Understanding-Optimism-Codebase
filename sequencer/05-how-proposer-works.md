@@ -58,6 +58,8 @@ In this section, we will delve into the mechanisms and implementation principles
 
 The `Start` function is called to initiate the `loop`. Within the loop, the function `FetchNextOutputInfo` is primarily responsible for checking whether the next block should send a `proposal` transaction. If it should, the `sendTransaction` function is directly called to send it to L1. Otherwise, the loop continues to the next iteration.
 
+> **Source Code**: [op-proposer/proposer/l2_output_submitter.go (v1.1.4)](https://github.com/ethereum-optimism/optimism/blob/v1.1.4/op-proposer/proposer/l2_output_submitter.go#L381)
+
 ```go
     func (l *L2OutputSubmitter) loop() {
         defer l.wg.Done()
@@ -101,6 +103,8 @@ The `Start` function is called to initiate the `loop`. Within the loop, the func
 
 The `FetchNextOutputInfo` function retrieves the next block number for sending a `proposal` by calling the `l2ooContract` contract. It then compares this block number with the current L2 block number to determine whether a `proposal` transaction should be sent. If it should be sent, the `fetchOutput` function is called to generate the `output`.
 
+> **Source Code**: [op-proposer/proposer/l2_output_submitter.go (v1.1.4)](https://github.com/ethereum-optimism/optimism/blob/v1.1.4/op-proposer/proposer/l2_output_submitter.go#L241)
+
 ```go
     func (l *L2OutputSubmitter) FetchNextOutputInfo(ctx context.Context) (*eth.OutputResponse, bool, error) {
         cCtx, cancel := context.WithTimeout(ctx, l.networkTimeout)
@@ -142,9 +146,11 @@ The `FetchNextOutputInfo` function retrieves the next block number for sending a
 
 `fetchOutput` function internally uses `OutputV0AtBlock` to retrieve and process the `output` response body.
 
-`op-service/sources/l2_client.go`
+`op-node/sources/l2_client.go`
 
 The `OutputV0AtBlock` function takes the previously identified block hash for sending a `proposal` to obtain the block header. It then derives the data needed for `OutputV0` based on this block header. The role of the `StorageHash (withdrawal_storage_root)` obtained through the `GetProof` function is to significantly reduce the size of the entire Merkle tree proof process if only `state` data related to `L2ToL1MessagePasserAddr` is needed.
+
+> **Source Code**: [op-node/sources/l2_client.go (v1.1.4)](https://github.com/ethereum-optimism/optimism/blob/v1.1.4/op-node/sources/l2_client.go#L170)
 
 ```go
     func (s *L2Client) OutputV0AtBlock(ctx context.Context, blockHash common.Hash) (*eth.OutputV0, error) {
@@ -182,6 +188,8 @@ The `OutputV0AtBlock` function takes the previously identified block hash for se
 
 Within the `sendTransaction` function, the `proposeL2OutputTxData` function is indirectly called to use the `ABI of the L1 contract` to match our `output` with the `input format` of the contract function. The `sendTransaction` function then sends the packaged data to L1, interacting with the `L2OutputOracle contract`.
 
+> **Source Code**: [op-proposer/proposer/l2_output_submitter.go (v1.1.4)](https://github.com/ethereum-optimism/optimism/blob/v1.1.4/op-proposer/proposer/l2_output_submitter.go#L313)
+
 ```go
     func proposeL2OutputTxData(abi *abi.ABI, output *eth.OutputResponse) ([]byte, error) {
         return abi.Pack(
@@ -197,6 +205,7 @@ Within the `sendTransaction` function, the `proposeL2OutputTxData` function is i
 
 The `L2OutputOracle contract` validates this `state root from the L2 block` and stores it in the `contract's storage`.
 
+> **Source Code**: [packages/contracts-bedrock/src/L1/L2OutputOracle.sol (v1.1.4)](https://github.com/ethereum-optimism/optimism/blob/v1.1.4/packages/contracts-bedrock/src/L1/L2OutputOracle.sol#L178)
 
 ```solidity
     /// @notice Accepts an outputRoot and the timestamp of the corresponding L2 block.
