@@ -36,6 +36,8 @@ Here we first sort out the modules we need and then look at these modules.
 
 By querying the current `origin.Number + 1` block height, we obtain the latest l1 block. If this block does not exist, i.e., `error` matches `ethereum.NotFound`, it means that the current block height is the latest, and the next block has not yet been produced on l1. If successfully retrieved, the latest block number is recorded in `l1t.block`.
 
+> **Source Code**: [op-node/rollup/derive/l1_traversal.go (v1.1.4)](https://github.com/ethereum-optimism/optimism/blob/v1.1.4/op-node/rollup/derive/l1_traversal.go#L60)
+
 ```go
     func (l1t *L1Traversal) AdvanceL1Block(ctx context.Context) error {
         origin := l1t.block
@@ -64,6 +66,8 @@ By querying the current `origin.Number + 1` block height, we obtain the latest l
 Firstly, we use `InfoAndTxsByHash` to fetch all `transactions` from the block we just acquired. Then we pass these `transactions`, along with our `batcherAddr` and our `config`, into the `DataFromEVMTransactions` function.
 Why do we pass these parameters? Because when we are filtering these transactions, we need to ensure the accuracy (authority) of the `batcher` address and the recipient address. After `DataFromEVMTransactions` receives these parameters, it loops through each transaction to filter based on the address accuracy, thereby identifying the correct `batch transactions`.
 
+> **Source Code**: [op-node/rollup/derive/calldata_source.go (v1.1.4)](https://github.com/ethereum-optimism/optimism/blob/v1.1.4/op-node/rollup/derive/calldata_source.go#L62)
+
 ```go
     func NewDataSource(ctx context.Context, log log.Logger, cfg *rollup.Config, fetcher L1TransactionFetcher, block eth.BlockID, batcherAddr common.Address) DataIter {
         _, txs, err := fetcher.InfoAndTxsByHash(ctx, block.Hash)
@@ -84,6 +88,8 @@ Why do we pass these parameters? Because when we are filtering these transaction
         }
     }
 ```
+
+> **Source Code**: [op-node/rollup/derive/calldata_source.go (v1.1.4)](https://github.com/ethereum-optimism/optimism/blob/v1.1.4/op-node/rollup/derive/calldata_source.go#L107)
 
 ```go
     func DataFromEVMTransactions(config *rollup.Config, batcherAddr common.Address, txs types.Transactions, log log.Logger) []eth.Data {
@@ -117,6 +123,7 @@ In this section, we first parse the `data` obtained in the previous step into a 
 
 This function uses the `NextData` function to obtain the data from the previous step. It then parses this data and adds it to the `FrameQueue`'s `frames` array, returning the first `frame` in the array.
 
+> **Source Code**: [op-node/rollup/derive/frame_queue.go (v1.1.4)](https://github.com/ethereum-optimism/optimism/blob/v1.1.4/op-node/rollup/derive/frame_queue.go#L36)
 
 ```go
     func (fq *FrameQueue) NextFrame(ctx context.Context) (Frame, error) {
@@ -219,6 +226,7 @@ The `NextBatch` function mainly decodes the previously fetched `raw data` into d
 
 The `createNextAttributes` function internally calls `PreparePayloadAttributes`.
 
+> **Source Code**: [op-node/rollup/derive/attributes_queue.go (v1.1.4)](https://github.com/ethereum-optimism/optimism/blob/v1.1.4/op-node/rollup/derive/attributes_queue.go#L51)
 
 ```go
     func (aq *AttributesQueue) NextAttributes(ctx context.Context, l2SafeHead eth.L2BlockRef) (*eth.PayloadAttributes, error) {
@@ -242,6 +250,8 @@ The `createNextAttributes` function internally calls `PreparePayloadAttributes`.
 
     }
 ```
+
+> **Source Code**: [op-node/rollup/derive/attributes_queue.go (v1.1.4)](https://github.com/ethereum-optimism/optimism/blob/v1.1.4/op-node/rollup/derive/attributes_queue.go#L74)
 
 ```go
     func (aq *AttributesQueue) createNextAttributes(ctx context.Context, batch *BatchData, l2SafeHead eth.L2BlockRef) (*eth.PayloadAttributes, error) {
@@ -289,6 +299,7 @@ At this step, the `safehead` in the `engine queue` is first set to `safe`. Howev
 
 The `tryNextSafeAttributes` function internally assesses the relationship between the current `safehead` and `unsafehead`. If everything is normal, it triggers the `consolidateNextSafeAttributes` function. This function sets the `safeHead` in the `engine queue` as the `safe` block constructed from the `safeAttributes` we obtained in the previous step. It also sets `needForkchoiceUpdate` to `true`, triggering the subsequent `ForkchoiceUpdate` to change the block status in the EL to `safe`, thus truly converting an `unsafe` block into a `safe` block. The final function, `postProcessSafeL2`, adds the `safehead` to the `finalizedL1` queue for subsequent `finalization` use.
 
+> **Source Code**: [op-node/rollup/derive/engine_queue.go (v1.1.4)](https://github.com/ethereum-optimism/optimism/blob/v1.1.4/op-node/rollup/derive/engine_queue.go#L548)
 
 ```go
     func (eq *EngineQueue) tryNextSafeAttributes(ctx context.Context) error {
@@ -320,6 +331,7 @@ A safe block is not truly secure; it needs to undergo further finalization to be
 
 The `tryFinalizePastL2Blocks` function internally checks blocks in the `finalized queue` against a 64-block criterion. If it passes the check, `tryFinalizeL2` is called to finalize the setting in the `engine queue` and update the `needForkchoiceUpdate` marker.
 
+> **Source Code**: [op-node/rollup/derive/engine_queue.go (v1.1.4)](https://github.com/ethereum-optimism/optimism/blob/v1.1.4/op-node/rollup/derive/engine_queue.go#L328)
 
 ```go
     func (eq *EngineQueue) tryFinalizePastL2Blocks(ctx context.Context) error {
@@ -339,6 +351,8 @@ The `tryFinalizePastL2Blocks` function internally checks blocks in the `finalize
         return nil
     }
 ```
+
+> **Source Code**: [op-node/rollup/derive/engine_queue.go (v1.1.4)](https://github.com/ethereum-optimism/optimism/blob/v1.1.4/op-node/rollup/derive/engine_queue.go#L363)
 
 ```go
     func (eq *EngineQueue) tryFinalizeL2() {
@@ -362,6 +376,8 @@ The `tryFinalizePastL2Blocks` function internally checks blocks in the `finalize
 
 ### Loop Triggering
 The `eventLoop` function in `op-node/rollup/driver/state.go` is responsible for triggering the entry point of the entire loop process. It mainly indirectly executes the `Step` function found in `op-node/rollup/derive/engine_queue.go`.
+
+> **Source Code**: [op-node/rollup/derive/engine_queue.go (v1.1.4)](https://github.com/ethereum-optimism/optimism/blob/v1.1.4/op-node/rollup/derive/engine_queue.go#L245)
 
 ```go
 func (eq *EngineQueue) Step(ctx context.Context) error {
