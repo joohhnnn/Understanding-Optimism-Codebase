@@ -11,7 +11,7 @@ On a more macroscopic level, the sequencer, during the L2 block generation proce
 
 After the operation node (opnode) starts up, the Driver initiates an event loop. Within this event loop, we have defined the `sequencerCh` channel and the `planSequencerAction` method.
 
-> **Source Code**: [op-node/rollup/driver/state.go (v1.0.9)](https://github.com/ethereum-optimism/optimism/blob/v1.0.9/op-node/rollup/driver/state.go#L191-L200)
+> **Source Code**: [op-node/rollup/driver/state.go (v1.1.4)](https://github.com/ethereum-optimism/optimism/blob/v1.1.4/op-node/rollup/driver/state.go#L214)
 
 ```go
 sequencerTimer := time.NewTimer(0)
@@ -36,7 +36,7 @@ Here, "delay time" is an important concept. It dictates the amount of time to wa
 
 In the for loop of the event loop, a series of checks are performed initially. For example, we check whether the sequencer is enabled and whether the L1 state is ready, to determine if the next sequencer operation can be triggered.
 
-> **Source Code**: [op-node/rollup/driver/state.go (v1.0.9)](https://github.com/ethereum-optimism/optimism/blob/v1.0.9/op-node/rollup/driver/state.go#L209-L235)
+> **Source Code**: [op-node/rollup/driver/state.go (v1.1.4)](https://github.com/ethereum-optimism/optimism/blob/v1.1.4/op-node/rollup/driver/state.go#L236)
 
 ```go
 for {    
@@ -80,7 +80,7 @@ During the checking process, the timer was set for the first time through `planS
 
 Next, let's take a look at the following part of the code:
 
-> **Source Code**: [op-node/rollup/driver/state.go (v1.0.9)](https://github.com/ethereum-optimism/optimism/blob/v1.0.9/op-node/rollup/driver/state.go#L245-L259)
+> **Source Code**: [op-node/rollup/driver/state.go (v1.1.4)](https://github.com/ethereum-optimism/optimism/blob/v1.1.4/op-node/rollup/driver/state.go#L268)
 
 ```go
 	select {
@@ -105,7 +105,7 @@ This part of the code is triggered when the timer, set previously, reaches the p
 
 Next, let us examine the contents of the triggered `RunNextSequencerAction` function.
 
-> **Source Code**: [op-node/rollup/driver/sequencer.go (v1.0.9)](https://github.com/ethereum-optimism/optimism/blob/v1.0.9/op-node/rollup/driver/sequencer.go#L199-L255)
+> **Source Code**: [op-node/rollup/driver/sequencer.go (v1.1.4)](https://github.com/ethereum-optimism/optimism/blob/v1.1.4/op-node/rollup/driver/sequencer.go#L199-L255)
 
 ```go
 	// RunNextSequencerAction starts new block building work, or seals existing work,
@@ -220,7 +220,7 @@ Let's highlight the crucial steps, primarily divided into two parts: one is comp
 
 First, let's look at the process of starting a new block build.
 
-> **Source Code**: [op-node/rollup/driver/sequencer.go (v1.0.9)](https://github.com/ethereum-optimism/optimism/blob/v1.0.9/op-node/rollup/driver/sequencer.go#L63)
+> **Source Code**: [op-node/rollup/driver/sequencer.go (v1.1.4)](https://github.com/ethereum-optimism/optimism/blob/v1.1.4/op-node/rollup/driver/sequencer.go#L63)
 ```go
 	func (d *Sequencer) StartBuildingBlock(ctx context.Context) error {
 	…
@@ -275,13 +275,13 @@ Through such a design, the system can flexibly and efficiently adjust the block 
 
 In the function below, we can see that the passed-in epoch parameter is `l1Origin.ID()`. This aligns with our definition of epoch numbering. The function is responsible for preparing all the necessary attributes for creating a new L2 block.
 
-> **Source Code**: [op-node/rollup/driver/sequencer.go (v1.0.9)](https://github.com/ethereum-optimism/optimism/blob/v1.0.9/op-node/rollup/driver/sequencer.go#L63)
+> **Source Code**: [op-node/rollup/driver/sequencer.go (v1.1.4)](https://github.com/ethereum-optimism/optimism/blob/v1.1.4/op-node/rollup/driver/sequencer.go#L83)
 
 ```go
 	attrs, err := d.attrBuilder.PreparePayloadAttributes(fetchCtx, l2Head, l1Origin.ID())
 ```
 
-> **Source Code**: [op-node/rollup/derive/attributes.go (v1.0.9)](https://github.com/ethereum-optimism/optimism/blob/v1.0.9/op-node/rollup/derive/attributes.go#L46)
+> **Source Code**: [op-node/rollup/derive/attributes.go (v1.1.4)](https://github.com/ethereum-optimism/optimism/blob/v1.1.4/op-node/rollup/derive/attributes.go#L46)
 
 ```go
 	func (ba *FetchingAttributesBuilder) PreparePayloadAttributes(ctx context.Context, l2Parent eth.L2BlockRef, epoch eth.BlockID) (attrs *eth.PayloadAttributes, err error) {
@@ -365,7 +365,7 @@ As illustrated in the code, the `PreparePayloadAttributes` is tasked with prepar
 
 Having acquired the attributes, we proceed further down.
 
-> **Source Code**: [op-node/rollup/driver/sequencer.go (v1.0.9)](https://github.com/ethereum-optimism/optimism/blob/v1.0.9/op-node/rollup/driver/sequencer.go#L92)
+> **Source Code**: [op-node/rollup/driver/sequencer.go (v1.1.4)](https://github.com/ethereum-optimism/optimism/blob/v1.1.4/op-node/rollup/driver/sequencer.go#L92)
 
 ```go
 	attrs.NoTxPool = uint64(attrs.Timestamp) > l1Origin.Time+d.config.MaxSequencerDrift
@@ -375,7 +375,7 @@ Determining whether it is necessary to produce an empty block, note that even he
 
 Next, the `StartPayload` is called to initiate the building of this payload.
 
-> **Source Code**: [op-node/rollup/driver/sequencer.go (v1.0.9)](https://github.com/ethereum-optimism/optimism/blob/v1.0.9/op-node/rollup/driver/sequencer.go#L99)
+> **Source Code**: [op-node/rollup/driver/sequencer.go (v1.1.4)](https://github.com/ethereum-optimism/optimism/blob/v1.1.4/op-node/rollup/driver/sequencer.go#L99)
 
 ```go
 	errTyp, err := d.engine.StartPayload(ctx, l2Head, attrs, false)
@@ -388,7 +388,7 @@ Next, the `StartPayload` is called to initiate the building of this payload.
 
 The `StartPayload` mainly triggers a ForkchoiceUpdate and updates some of the building states in the EngineQueue, such as the buildingID, etc. Subsequently, when `RunNextSequencerAction` is run again, it will find the ID that is being built based on this ID.
 
-> **Source Code**: [op-node/rollup/derive/engine_queue.go (v1.0.9)](https://github.com/ethereum-optimism/optimism/blob/v1.0.9/op-node/rollup/derive/engine_queue.go#L605)
+> **Source Code**: [op-node/rollup/derive/engine_queue.go (v1.1.4)](https://github.com/ethereum-optimism/optimism/blob/v1.1.4/op-node/rollup/derive/engine_queue.go#L669)
 
 ```go
 	func (eq *EngineQueue) StartPayload(ctx context.Context, parent eth.L2BlockRef, attrs *eth.PayloadAttributes, updateSafe bool) (errType BlockInsertionErrType, err error) {
@@ -414,7 +414,7 @@ The `StartPayload` mainly triggers a ForkchoiceUpdate and updates some of the bu
 		return BlockInsertOK, nil
 	}
 ```
-> **Source Code**: [op-node/rollup/derive/engine_update.go (v1.0.9)](https://github.com/ethereum-optimism/optimism/blob/v1.0.9/op-node/rollup/derive/engine_update.go#L84)
+> **Source Code**: [op-node/rollup/derive/engine_update.go (v1.1.4)](https://github.com/ethereum-optimism/optimism/blob/v1.1.4/op-node/rollup/derive/engine_update.go#L84)
 
 ```go
    func StartPayload(ctx context.Context, eng Engine, fc eth.ForkchoiceState, attrs *eth.PayloadAttributes) (id eth.PayloadID, errType BlockInsertionErrType, err error) {
@@ -697,7 +697,7 @@ At the current stage, we have confirmed that the `buildingID` in the `EngineQueu
 Next, due to the timer set at the very beginning, the sequencer triggers and calls the `RunNextSequencerAction` method again. 
 It enters the judgment, but this time, our `buildingID` already exists, so it enters the `CompleteBuildingBlock` stage.
 
-> **Source Code**: [op-node/rollup/driver/sequencer.go (v1.0.9)](https://github.com/ethereum-optimism/optimism/blob/v1.0.9/op-node/rollup/driver/sequencer.go#L199)
+> **Source Code**: [op-node/rollup/driver/sequencer.go (v1.1.4)](https://github.com/ethereum-optimism/optimism/blob/v1.1.4/op-node/rollup/driver/sequencer.go#L199)
 
 ```go
 	if onto, buildingID, safe := d.engine.BuildingPayload(); buildingID != (eth.PayloadID{}) {
@@ -708,7 +708,7 @@ It enters the judgment, but this time, our `buildingID` already exists, so it en
 ```
 CompleteBuildingBlock calls the ConfirmPayload method internally
 
-> **Source Code**: [op-node/rollup/derive/engine_update.go (v1.0.9)](https://github.com/ethereum-optimism/optimism/blob/v1.0.9/op-node/rollup/derive/engine_update.go#L120)
+> **Source Code**: [op-node/rollup/derive/engine_update.go (v1.1.4)](https://github.com/ethereum-optimism/optimism/blob/v1.1.4/op-node/rollup/derive/engine_update.go#L120)
 ```go
 	// ConfirmPayload ends an execution payload building process in the provided Engine, and persists the payload as the canonical head.
 	// If updateSafe is true, then the payload will also be recognized as safe-head at the same time.
@@ -826,7 +826,7 @@ Through the `SetFinalized` process, the block generated from the previous steps 
 
 With this, the basic construction of an L2 block is completed. The subsequent task is to record this new L2 information in the sequencer. Let's return to the `ConfirmPayload` function to continue.
 
-> **Source Code**: [op-node/rollup/derive/engine_queue.go (v1.0.9)](https://github.com/ethereum-optimism/optimism/blob/v1.0.9/op-node/rollup/derive/engine_queue.go#L637)
+> **Source Code**: [op-node/rollup/derive/engine_queue.go (v1.1.4)](https://github.com/ethereum-optimism/optimism/blob/v1.1.4/op-node/rollup/derive/engine_queue.go#L692)
 
 ```go
 		payload, errTyp, err := ConfirmPayload(ctx, eq.log, eq.engine, fc, eq.buildingID, eq.buildingSafe)
