@@ -41,6 +41,8 @@ In this update of OP-Stack, the main changes in logic involve converting data pr
 
 #### Defining blob
 
+> **Source Code**: [op-service/eth/blob.go (v1.7.4)](https://github.com/ethereum-optimism/optimism/blob/v1.7.4/op-service/eth/blob.go#L31)
+
 ```
 BlobSize = 4096 * 32
   
@@ -53,6 +55,8 @@ type Blob [BlobSize]byte
 It's important to note that these specs correspond to the latest version of the code, while the code snippets below are from an initial simplified version. The main difference is that the Blob type is divided into 4096 field elements, each constrained by the size of a "specific modulus," meaning math.log2(BLS_MODULUS) = 254.8570894..., which implies that each field element is no larger than 254 bits or 31.75 bytes. The initial demo code used only 31 bytes, thus not utilizing 0.75 bytes of space. In contrast, the latest code version employs four field elements working together to utilize the 0.75 bytes of space fully, thus increasing data efficiency.
 Here is part of Pull Request(8767) with code snippets:
 By iterating 4096 times, it reads a total of 31*4096 bytes of data, which are then added to the blob.
+
+> **Source Code**: [op-service/eth/blob.go (commit 78ecdf5)](https://github.com/ethereum-optimism/optimism/blob/78ecdf523026d0afa45c519524a15b83cbe162c8/op-service/eth/blob.go#L86)
 
 ```go
 func (b *Blob) FromData(data Data) error {
@@ -82,6 +86,8 @@ func (b *Blob) FromData(data Data) error {
 #### blob decoding
 
 blob data decoding follows the same principles as the data encoding mentioned above.
+
+> **Source Code**: [op-service/eth/blob.go (commit 78ecdf5)](https://github.com/ethereum-optimism/optimism/blob/78ecdf523026d0afa45c519524a15b83cbe162c8/op-service/eth/blob.go#L111)
 
 ```go
 func (b *Blob) ToData() (Data, error) {
@@ -121,6 +127,8 @@ default:
 #### BatchSubmitter
 
 BatchSubmitter's functionality has expanded from just sending calldata to deciding whether to send calldata or blob-type data, depending on the situation. Blob-type data is encoded within blobTxCandidate using the previously mentioned FromData (blob-encode) function.
+
+> **Note**: This code is from Pull Request 8769, which may not correspond to a specific release version as mentioned in the document warning.
 
 ```go
 func (l *BatchSubmitter) sendTransaction(txdata txData, queue *txmgr.Queue[txData], receiptsCh chan txmgr.TxReceipt[txData]) error {
@@ -172,6 +180,8 @@ func (l *BatchSubmitter) blobTxCandidate(data []byte) (*txmgr.TxCandidate, error
 #### GetBlob
 
 GetBlob is responsible for retrieving blob data, its main logic includes using 4096 field elements to construct a complete blob and verifying its correctness through commitment. Additionally, GetBlob also participates in the [upper layer L1Retrieval logic process.](https://github.com/joohhnnn/Understanding-Optimism-Codebase/blob/main/sequencer/04-how-derivation-works.md)
+
+> **Note**: This code is from Pull Request 9098, which may not correspond to a specific release version as mentioned in the document warning.
 
 ```go
 func (p *PreimageOracle) GetBlob(ref eth.L1BlockRef, blobHash eth.IndexedBlobHash) *eth.Blob {
