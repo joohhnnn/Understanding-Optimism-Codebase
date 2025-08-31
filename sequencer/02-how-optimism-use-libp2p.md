@@ -417,7 +417,7 @@ Similar to L1, nodes validate blocks upon receipt. The major difference in Optim
 
 Let's illustrate this with the process of signing and verifying signatures:
 
-- When the sequencer publishes a block via the P2P network, the sequencer signs the block.
+- When the sequencer publishes a block via the P2P network, the sequencer [signs the block.](https://github.com/ethereum-optimism/optimism/blob/c5007bb4be66e08b9e4db51c72096912d69eeb0c/op-node/p2p/gossip.go#L547)
 
 > **Source Code**: [op-node/p2p/gossip.go (v1.1.4)](https://github.com/ethereum-optimism/optimism/blob/v1.1.4/op-node/p2p/gossip.go#L394)
 
@@ -435,7 +435,7 @@ func (p *publisher) PublishL2Payload(ctx context.Context, envelope *eth.Executio
 
 ```
 
-- When a verifier receives the block, they check if the signer is the sequencer's signing address.
+- When a verifier receives the block, they [check if the signer is the sequencer's signing address.](https://github.com/ethereum-optimism/optimism/blob/c5007bb4be66e08b9e4db51c72096912d69eeb0c/op-node/p2p/gossip.go#L434)
 
 > **Source Code**: [op-node/p2p/gossip.go (v1.1.4)](https://github.com/ethereum-optimism/optimism/blob/v1.1.4/op-node/p2p/gossip.go#L338)
 
